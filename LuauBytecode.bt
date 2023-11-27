@@ -637,7 +637,17 @@ typedef struct {
     
     uchar has_debug;
     if (has_debug) {
-        // TODO: actually support this
+        VarInt debug_locals_size;
+        typedef struct {
+            VarInt name <comment="String table index">;
+            VarInt start_pc;
+            VarInt end_pc;
+            uchar reg <comment="register index for this local">;
+        } DebugLocal <optimize=false>;
+        DebugLocal debug_locals[ReadVarInt(debug_locals_size)];
+
+        VarInt debug_upvals_size;
+        VarInt debug_upvals[ReadVarInt(debug_upvals_size)] <comment="String table indices">;
     }
 } Proto <optimize=false, bgcolor=cLtGreen>;
 
