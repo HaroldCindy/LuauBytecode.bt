@@ -11,6 +11,11 @@
 //   History: 
 //------------------------------------------------
 
+// Because we don't keep track of what opcodes are in each version,
+// and opcode values can be re-used as they're deprecated, we only
+// really support the latest version of each bytecode. Everything
+// else is best efforts. It'd be nice if we could have conditional
+// definitions in enums, but whatever.
 uchar version;
 if (version >= 4)
     uchar typesversion;
@@ -421,8 +426,15 @@ typedef enum <uint32> {
     LOP_CAPTURE,
 
     // removed in v3
-    LOP_DEP_JUMPIFEQK,
-    LOP_DEP_JUMPIFNOTEQK,
+    // LOP_DEP_JUMPIFEQK,
+    // LOP_DEP_JUMPIFNOTEQK,
+
+    // SUBRK, DIVRK: compute arithmetic operation between the constant and a source register and put the result into target register
+    // A: target register
+    // B: source register
+    // C: constant table index (0..255); must refer to a number
+    LOP_SUBRK,
+    LOP_DIVRK,
 
     // FASTCALL1: perform a fast call of a built-in function using 1 register argument
     // A: builtin function id (see LuauBuiltinFunction)
@@ -499,8 +511,9 @@ uint64 GetOpCodeLen(LuauOpCode opcode) {
         case LOP_SETLIST:
         case LOP_FORGLOOP:
         case LOP_LOADKX:
-        case LOP_DEP_JUMPIFEQK:
-        case LOP_DEP_JUMPIFNOTEQK:
+        // Deprecated!
+        // case LOP_DEP_JUMPIFEQK:
+        // case LOP_DEP_JUMPIFNOTEQK:
         case LOP_FASTCALL2:
         case LOP_FASTCALL2K:
         case LOP_JUMPXEQKNIL:
